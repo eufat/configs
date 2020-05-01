@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-  export ZSH="/home/nodeflux/.oh-my-zsh"
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -26,8 +26,14 @@ ZSH_THEME="robbyrussell"
 # Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
 
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
+
 # Uncomment the following line to change how often to auto-update (in days).
 # export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS=true
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -62,7 +68,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git zsh-autosuggestions kubectl)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -83,9 +89,6 @@ source $ZSH/oh-my-zsh.sh
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# ssh
-# export SSH_KEY_PATH="~/.ssh/rsa_id"
-
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -95,23 +98,31 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-export GOPATH=/go
 
-# added by Anaconda3 2018.12 installer
-# >>> conda init >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$(CONDA_REPORT_ERRORS=false '/home/nodeflux/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    \eval "$__conda_setup"
-else
-    if [ -f "/home/nodeflux/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/nodeflux/anaconda3/etc/profile.d/conda.sh"
-        CONDA_CHANGEPS1=false conda activate base
-    else
-        \export PATH="/home/nodeflux/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+export NODEFLUXAPIS_PATH="/home/nodeflux/gits/nodefluxapis"
+export EXTENSIONAPIS_PATH="/home/nodeflux/gits/extensionapis"
+export GOOGLEAPIS_PATH="/home/nodeflux/gits/googleapis"
+export GOOGLE_APPLICATION_CREDENTIALS=/home/nodeflux/gits/envs/google.json
+export PATH=$PATH:~/.local/bin
 
-eval "conda deactivate"
-# <<< conda init <<<
+alias ch="code ."
+alias c="code"
+alias nh="nautilus --browser ."
+alias n="nautilus --browser"
+alias stgcl-stop="gcloud -q container clusters resize staging-fire --zone asia-southeast1-c --project fire-k8s-233511 --node-pool  p4-16vcpu-16gb-preemp --num-nodes 0"
+alias stgcl-start="gcloud -q container clusters resize staging-fire --zone asia-southeast1-c --project fire-k8s-233511 --node-pool  p4-16vcpu-16gb-preemp --num-nodes 1"
+alias stgcl-restart="gcloud -q container clusters resize staging-fire --zone asia-southeast1-c --project fire-k8s-233511 --node-pool  p4-16vcpu-16gb-preemp --num-nodes 0 && gcloud -q container clusters resize staging-fire --zone asia-southeast1-c --project fire-k8s-233511 --node-pool  p4-16vcpu-16gb-preemp --num-nodes 1"
+alias movegcr='f() { docker pull registry.gitlab.com/nodefluxio/fire/$1 && docker tag registry.gitlab.com/nodefluxio/fire/$1 asia.gcr.io/fire-k8s-233511/$1 && gcloud docker -- push asia.gcr.io/fire-k8s-233511/$1 };f'
+
+alias bpush='f() { docker build --build-arg SSH_PRIVATE_KEY="$(cat /home/nodeflux/.ssh/id_rsa)" -t asia.gcr.io/fire-k8s-233511/$1 . && gcloud docker -- push asia.gcr.io/fire-k8s-233511/$1 };f'
+alias b='f() { docker build --build-arg SSH_PRIVATE_KEY="$(cat /home/nodeflux/.ssh/id_rsa)" -t asia.gcr.io/fire-k8s-233511/$1 . };f'
+
+
+if [ "$TMUX" = "" ]; then tmux; fi
+
+export LPATH=$LPATH:/usr/lib/nvidia-current:/opt/bin:/opt/lib64:/opt/lib
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/lib/nvidia-current:/opt/lib64:/opt/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia-current:/opt/lib64:/opt/lib
+export PATH=$PATH:/opt/bin:/opt/lib64:/opt/lib
